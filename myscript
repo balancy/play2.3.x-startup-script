@@ -1,0 +1,44 @@
+#! /bin/sh
+
+# decription:
+# 1. provide the script with app name, and app folder name
+# 2. add script to init.id, with folowing commands
+#    sudo cp myscript /etc/init.d
+#    sudo chmod +x /etc/init.d/myscript
+#    sudo update-rc.d myscript defaults 98 02
+
+# decription of app
+DESC="Myapp play-2.x.x"
+
+#provide app name, and app folder name
+APP_NAME=myapp
+APP_FOLDER=myapp-0.1-SNAPSHOT
+
+APPLICATION_PATH=/var/play/$APP_FOLDER
+START_APP = $APPLICATION_PATH/bin/$APP_NAME
+PID_FILE = $APPLICATION_PATH/RUNNING_PID
+
+DAEMON_OPTS=""
+
+start()
+{
+       echo -e "Starting $DESC with: $START_APP $DAEMON_OPTS \n"
+       $START_APP $DAEMON_OPTS & disown &
+}
+stop()
+{
+        echo -e "Stopping $DESC: \n"
+        kill `cat $PID_FILE`
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+        stop
+        ;;
+esac
+
+exit $RETVAL
